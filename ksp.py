@@ -72,7 +72,7 @@ with open('result.txt', 'w') as file:
             if altitude <= 3000 and flag == 3:
                 vessel.control.activate_next_stage()
                 flag += 1
-            if altitude <= 1500 and flag == 4:
+            if altitude <= 2500 and flag == 4:
                 vessel.control.activate_next_stage()
                 flag += 1
 
