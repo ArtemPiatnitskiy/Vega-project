@@ -1,5 +1,6 @@
 import matplotlib
 import numpy as np
+from mpl_toolkits.mplot3d import Axes3D
 
 matplotlib.use('TkAgg')
 
@@ -66,23 +67,33 @@ def traectory_graf():
 
 def height_graf():
     # Окно для графиков высоты (цвета: зеленый для высоты от времени и скорости)
-    F(2, 2, 1, height, times, "Высота (м)", "Время (с)", 'green')
-    F(2, 2, 2, height, speed, "Высота (м)", "Скорость (м/c)", 'green')
+    F(2, 2, 1, times, height, "Время (с)", "Высота (м)", 'green')
+    F(2, 2, 2, speed, height, "Скорость (м/c)", "Высота (м)", 'green')
     plt.gca().invert_xaxis()  # Инвертируем ось X, чтобы высота шла справа налево
 
 def pressure_height_graf():
     # График давления от высоты (фиолетовый цвет)
     F(2, 2, 3, height, Pressure, "Высота (м)", "Давление (Па)", 'purple')
 
-def graf_3D():
+def graf_3D(position_x, position_y, position_z):
     # 3D график для траектории (цвета для осей: красный для X, зеленый для Y, синий для Z)
     fig = plt.figure(figsize=(7, 4))
-    ax_3d = fig.add_subplot(projection='3d')
+    ax_3d = fig.add_subplot(111, projection='3d')
+    
+    # Построение точек
     ax_3d.scatter(position_x, position_y, position_z, color='blue')
-    # ax_3d.set_xlabel('x', color='red')
-    # ax_3d.set_ylabel('y', color='green')
-    # ax_3d.set_zlabel('z', color='blue')
 
+    # Добавляем подписи к осям
+    ax_3d.set_xlabel('X', color='red')
+    ax_3d.set_ylabel('Y', color='green')
+    ax_3d.set_zlabel('Z', color='blue')
+    
+    # Заголовок графика
+    ax_3d.set_title('Траектория спуска')
+
+    # Убираем вывод координат точек в окошке
+    ax_3d.grid(True)
+    ax_3d.view_init(elev=30, azim=30) 
 # Построение всех графиков сразу при запуске
 plt.figure(figsize=(10, 8))  # Создаем первое окно для графиков скоростей
 speed_graf()
@@ -98,7 +109,7 @@ pressure_height_graf()
 # plt.figure(figsize=(10, 8))  # Новое окно для графика давления по высоте
 
 # plt.figure(figsize=(10, 8))  # Новое окно для 3D графика
-graf_3D()
+graf_3D(position_x, position_y, position_z)
 
 # Отображаем все графики
 plt.show()
