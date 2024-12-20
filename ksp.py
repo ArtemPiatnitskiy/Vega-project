@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 conn = krpc.connect(name='Тест Ева орбита 1 14_12 (SANDBOX)')
 vessel = conn.space_center.active_vessel
 
-camera = conn.space_center.camera
 
 # Инициализируем списки для данных
 time_data = []
@@ -63,7 +62,10 @@ with open('result.txt', 'w') as file:
                 position_y_data.append(position[1])
                 position_z_data.append(position[2])
 
-            camera.focus = vessel
+            vessel_new = conn.space_center.active_vessel
+
+            if vessel != vessel_new:
+                vessel = vessel_new
 
             # Управление этапами
             if altitude <= 5000 and flag == 0:
@@ -73,6 +75,7 @@ with open('result.txt', 'w') as file:
                 vessel.control.activate_next_stage()
                 flag += 1
             if altitude <= 3000 and flag == 2:
+                vessel.control.activate_next_stage()
                 flag += 1
             if altitude <= 3000 and flag == 3:
                 vessel.control.activate_next_stage()
@@ -81,9 +84,12 @@ with open('result.txt', 'w') as file:
             if altitude <= 2500 and flag == 4:
                 vessel.control.activate_next_stage()
                 flag += 1
+            if altitude <= 1500 and flag == 5:
+                vessel.control.activate_next_stage()
+                flag += 1
 
             # Небольшая пауза для снижения нагрузки на процессор
-            time.sleep(1)
+            time.sleep(0.1)
 
     except KeyboardInterrupt:
         print("Сбор данных завершён. Построение графиков...")
