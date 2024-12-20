@@ -15,8 +15,12 @@ speed = list()
 position_x = list()
 position_y = list()
 position_z = list()
-
+Pressure = list()
 pos_xmy = list()
+
+def pressure_h(h):
+    H = 7000
+    return 5 * np.exp(-h/H)
 
 with open("result.txt") as file:
     for i in file.readlines():
@@ -31,45 +35,56 @@ with open("result.txt") as file:
         position_y.append(float(py))
         position_z.append(float(pz))
         pos_xmy.append(abs(float(px) - float(py)))
+        Pressure.append(pressure_h(float(h)))  # Обратите внимание на приведение h к float
 
-def F(n1, n2, n3, lst_x, lst_y, t_x, t_y):
+def F(n1, n2, n3, lst_x, lst_y, t_x, t_y, color):
     plt.subplot(n1, n2, n3)
-    plt.plot(lst_x, lst_y)
+    plt.plot(lst_x, lst_y, color=color)
     plt.xlabel(t_x)
     plt.ylabel(t_y)
     plt.grid()
+    plt.title(f"Зависимость {t_y} от {t_x}")  # Подпись графика
 
 def speed_graf():
-    F(2, 2, 1, times, velocity_x, "Время (с)", "Скорость по X (м/c)")
-    F(2, 2, 2, times, velocity_y, "Время (с)", "Скорость по Y (м/c)")
-    F(2, 2, 3, times, velocity_z, "Время (с)", "Скорость по Z (м/c)")
-    F(2, 2, 4, times, speed, "Время (с)", "Скорость общая (м/c)")
+    # Окно для графиков скоростей (цвета: синий для X, красный для Y, зеленый для Z, черный для общей скорости)
+    F(2, 2, 1, times, velocity_x, "Время (с)", "Скорость по X (м/c)", '#3c88bd')
+    F(2, 2, 2, times, velocity_y, "Время (с)", "Скорость по Y (м/c)", '#ff7f0e')
+    F(2, 2, 3, times, velocity_z, "Время (с)", "Скорость по Z (м/c)", '#2ca02c')
+    F(2, 2, 4, times, speed, "Время (с)", "Скорость общая (м/c)", 'red')
 
 def coords_graf():
-    F(2, 2, 1, times, position_x, "Время (с)", "Координаты по X")
-    F(2, 2, 2, times, position_y, "Время (с)", "Координаты по Y")
-    F(2, 2, 3, times, position_z, "Время (с)", "Координаты по Z")
+    # Окно для графиков координат (цвета: синий для X, оранжевый для Y, желтый для Z)
+    F(2, 2, 1, times, position_x, "Время (с)", "Координаты по X", '#3c88bd')
+    F(2, 2, 2, times, position_y, "Время (с)", "Координаты по Y", '#ff7f0e')
+    F(2, 2, 3, times, position_z, "Время (с)", "Координаты по Z", '#2ca02c')
 
 def traectory_graf():
-    F(2, 2, 1, position_x, position_y, "Координата по X", "Координата по Y")
-    F(2, 2, 2, position_y, position_z, "Координата по Y", "Координата по Z")
-    F(2, 2, 3, position_z, position_x, "Координата по Z", "Координата по X")
+    # Окно для траектории (цвета: синий для X-Y, красный для Y-Z, зеленый для Z-X)
+    F(2, 2, 1, position_x, position_y, "Координата по X", "Координата по Y", 'blue')
+    F(2, 2, 2, position_y, position_z, "Координата по Y", "Координата по Z", 'red')
+    F(2, 2, 3, position_z, position_x, "Координата по Z", "Координата по X", 'green')
 
 def height_graf():
-    F(2, 2, 1, height, times, "Высота (м)", "Время (с)")
-    F(2, 2, 2, height, speed, "Высота (м)", "Скорость (м/c)")
-    plt.gca().invert_xaxis()
+    # Окно для графиков высоты (цвета: зеленый для высоты от времени и скорости)
+    F(2, 2, 1, height, times, "Высота (м)", "Время (с)", 'green')
+    F(2, 2, 2, height, speed, "Высота (м)", "Скорость (м/c)", 'green')
+    plt.gca().invert_xaxis()  # Инвертируем ось X, чтобы высота шла справа налево
+
+def pressure_height_graf():
+    # График давления от высоты (фиолетовый цвет)
+    F(2, 2, 3, height, Pressure, "Высота (м)", "Давление (Па)", 'purple')
 
 def graf_3D():
+    # 3D график для траектории (цвета для осей: красный для X, зеленый для Y, синий для Z)
     fig = plt.figure(figsize=(7, 4))
     ax_3d = fig.add_subplot(projection='3d')
-    ax_3d.scatter(position_x, position_y, position_z)
-    ax_3d.set_xlabel('x')
-    ax_3d.set_ylabel('y')
-    ax_3d.set_zlabel('z')
+    ax_3d.scatter(position_x, position_y, position_z, color='blue')
+    # ax_3d.set_xlabel('x', color='red')
+    # ax_3d.set_ylabel('y', color='green')
+    # ax_3d.set_zlabel('z', color='blue')
 
 # Построение всех графиков сразу при запуске
-plt.figure(figsize=(10, 8))  # Создаем первое окно для графиков
+plt.figure(figsize=(10, 8))  # Создаем первое окно для графиков скоростей
 speed_graf()
 plt.figure(figsize=(10, 8))  # Новое окно для графиков координат
 coords_graf()
@@ -77,7 +92,12 @@ plt.figure(figsize=(10, 8))  # Новое окно для траектории
 traectory_graf()
 plt.figure(figsize=(10, 8))  # Новое окно для графиков высоты
 height_graf()
-plt.figure(figsize=(10, 8))  # Новое окно для 3D графика
+pressure_height_graf()
+# plt.figure(figsize=(10, 8))  # Новое окно для графика давления по времени
+
+# plt.figure(figsize=(10, 8))  # Новое окно для графика давления по высоте
+
+# plt.figure(figsize=(10, 8))  # Новое окно для 3D графика
 graf_3D()
 
 # Отображаем все графики
