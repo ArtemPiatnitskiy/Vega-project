@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 conn = krpc.connect(name='Тест Ева орбита 1 14_12 (SANDBOX)')
 vessel = conn.space_center.active_vessel
 
+camera = conn.space_center.camera
+
 # Инициализируем списки для данных
 time_data = []
 altitude_data = []
@@ -23,7 +25,7 @@ flag = 0
 
 # Время последней записи
 last_record_time = 0
-
+start_time = conn.space_center.ut
 # Открытие файла для записи данных
 with open('result.txt', 'w') as file:
     try:
@@ -46,11 +48,12 @@ with open('result.txt', 'w') as file:
                 speed = (velocity[0]**2 + velocity[1]**2 + velocity[2]**2)**0.5
 
                 # Записываем данные в файл
-                file.write(f"{current_time} {altitude} {velocity[0]} {velocity[1]} {velocity[2]} {speed} "
+                file.write(f"{current_time - start_time} {altitude} {velocity[0]} {velocity[1]} {velocity[2]} {speed} "
                            f"{position[0]} {position[1]} {position[2]}\n")
+                file.flush()
 
                 # Добавляем данные в списки
-                time_data.append(current_time)
+                time_data.append(current_time - start_time)
                 altitude_data.append(altitude)
                 velocity_x_data.append(velocity[0])
                 velocity_y_data.append(velocity[1])
@@ -59,6 +62,8 @@ with open('result.txt', 'w') as file:
                 position_x_data.append(position[0])
                 position_y_data.append(position[1])
                 position_z_data.append(position[2])
+
+            camera.focus = vessel
 
             # Управление этапами
             if altitude <= 5000 and flag == 0:
@@ -71,13 +76,14 @@ with open('result.txt', 'w') as file:
                 flag += 1
             if altitude <= 3000 and flag == 3:
                 vessel.control.activate_next_stage()
+                vessel = conn.space_center.active_vessel
                 flag += 1
             if altitude <= 2500 and flag == 4:
                 vessel.control.activate_next_stage()
                 flag += 1
 
             # Небольшая пауза для снижения нагрузки на процессор
-            time.sleep(0.1)
+            time.sleep(1)
 
     except KeyboardInterrupt:
         print("Сбор данных завершён. Построение графиков...")
