@@ -25,7 +25,7 @@ def pressure_h(h):
 
 with open("result.txt") as file:
     for i in file.readlines():
-        t, h, vx, vy, vz, sp, px, py, pz = i.split(" ")
+        t, h, vx, vy, vz, sp, pz, py, px = i.split(" ")
         times.append(float(t))
         height.append(float(h))
         velocity_x.append(float(vx))
