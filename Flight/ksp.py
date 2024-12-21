@@ -32,35 +32,30 @@ with open('result.txt', 'w') as file:
         while True:
             # Получаем текущее время
             current_time = conn.space_center.ut
-
-            # Проверяем, прошло ли 1 секунда с последней записи
-            if current_time - last_record_time >= 1:
-                # Обновляем время последней записи
-                last_record_time = current_time
-
-                # Получаем данные
-                altitude = vessel.flight().mean_altitude
-                eva = conn.space_center.bodies['Eve']
-                eva_reference_frame = eva.reference_frame
-                velocity = vessel.velocity(eva_reference_frame)
-                position = vessel.position(eva_reference_frame)
-                speed = (velocity[0]**2 + velocity[1]**2 + velocity[2]**2)**0.5
-
-                # Записываем данные в файл
-                file.write(f"{current_time - start_time} {altitude} {velocity[0]} {velocity[1]} {velocity[2]} {speed} "
-                           f"{position[0]} {position[1]} {position[2]}\n")
-                file.flush()
-
-                # Добавляем данные в списки
-                time_data.append(current_time - start_time)
-                altitude_data.append(altitude)
-                velocity_x_data.append(velocity[0])
-                velocity_y_data.append(velocity[1])
-                velocity_z_data.append(velocity[2])
-                speed_data.append(speed)
-                position_x_data.append(position[0])
-                position_y_data.append(position[1])
-                position_z_data.append(position[2])
+            
+            # Получаем данные
+            # mass = vessel.mass
+            pressure = vessel.flight().static_pressure
+            altitude = vessel.flight().mean_altitude
+            eva = conn.space_center.bodies['Eve']
+            eva_reference_frame = eva.reference_frame
+            velocity = vessel.velocity(eva_reference_frame)
+            position = vessel.position(eva_reference_frame)
+            speed = (velocity[0]**2 + velocity[1]**2 + velocity[2]**2)**0.5
+            # Записываем данные в файл
+            file.write(f"{current_time - start_time} {altitude} {velocity[0]} {velocity[1]} {velocity[2]} {speed} "
+                       f"{position[0]} {position[1]} {position[2]} {pressure}\n")
+            file.flush()
+            # Добавляем данные в списки
+            time_data.append(current_time - start_time)
+            altitude_data.append(altitude)
+            velocity_x_data.append(velocity[0])
+            velocity_y_data.append(velocity[1])
+            velocity_z_data.append(velocity[2])
+            speed_data.append(speed)
+            position_x_data.append(position[0])
+            position_y_data.append(position[1])
+            position_z_data.append(position[2])
 
             vessel_new = conn.space_center.active_vessel
 
