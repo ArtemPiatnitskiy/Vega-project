@@ -24,7 +24,7 @@ pos_xmy = list()
 with open("result.txt") as file:
 # with open("Result1.txt") as file:
     for i in file.readlines():
-        t, h, vx, vy, vz, sp, pz, py, px, pressure = i.split(" ")
+        t, h, vz, vy, vx, sp, pz, py, px, pressure = i.split(" ")
         times.append(float(t))
         height.append(float(h))
         velocity_x.append(float(vx))
