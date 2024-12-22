@@ -7,18 +7,6 @@ import matplotlib.pyplot as plt
 conn = krpc.connect(name='Тест Ева орбита 1 14_12 (SANDBOX)')
 vessel = conn.space_center.active_vessel
 
-
-# Инициализируем списки для данных
-time_data = []
-altitude_data = []
-velocity_x_data = []
-velocity_y_data = []
-velocity_z_data = []
-speed_data = []
-position_x_data = []
-position_y_data = []
-position_z_data = []
-
 # Флаг для управления этапами
 flag = 0
 
@@ -45,16 +33,6 @@ with open('result.txt', 'w') as file:
         file.write(f"{current_time - start_time} {altitude} {velocity[0]} {velocity[1]} {velocity[2]} {speed} "
                    f"{position[0]} {position[1]} {position[2]} {pressure}\n")
         file.flush()
-        # Добавляем данные в списки
-        time_data.append(current_time - start_time)
-        altitude_data.append(altitude)
-        velocity_x_data.append(velocity[0])
-        velocity_y_data.append(velocity[1])
-        velocity_z_data.append(velocity[2])
-        speed_data.append(speed)
-        position_x_data.append(position[0])
-        position_y_data.append(position[1])
-        position_z_data.append(position[2])
 
         vessel_new = conn.space_center.active_vessel
 
